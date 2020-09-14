@@ -29,7 +29,8 @@ import Button from './plugins/Button';
 import ResizeImage from './modules/ResizeImage';
 
 export default class FbsEditor {
-  constructor(obj) {
+  constructor(obj, options = {}) {
+    this.options = options;
     this.textarea = document.querySelector(obj);
     this.editor = document.createElement('div');
     this.toolbar = document.createElement('div');
@@ -165,7 +166,11 @@ export default class FbsEditor {
     this.plugins.push({
       name: 'images',
       objectClass: Images,
-      options: { name: 'Imagem', icon: 'icon-picture-o' },
+      options: {
+        name: 'Imagem',
+        icon: 'icon-picture-o',
+        ...this.options.images,
+      },
     });
   }
 
@@ -192,7 +197,8 @@ export default class FbsEditor {
 
     this.editorView.addEventListener('keyup', () => {
       console.log('insert');
-      this.textarea.value = this.editorView.outerHTML;
+      //this.textarea.value = this.editorView.outerHTML;
+      this.textarea.value = this.editorView.innerHTML;
     });
   }
 

@@ -4,6 +4,7 @@ import icons from '~/static/icons.json';
 export default class Images extends Button {
   constructor(options) {
     super(options);
+    this.uploadFiles = options.uploadFiles;
   }
 
   populatePopUp() {
@@ -169,33 +170,19 @@ export default class Images extends Button {
     this.dropProgressText.innerText = '0%';
     this.image.setAttribute('src', canvas.toDataURL());
     this.popupContainer.classList.add('active');
-    this.uploadFiles();
+    this.uploadImage();
   }
 
-  async uploadFiles() {
-    const data = new FormData();
-    data.append('file', this.file);
+  async uploadImage() {
     try {
-      const response = await axios.post(
-        `http://api.fbssistemas.com.br/api/images/upload`,
-        data,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          onUploadProgress: (progressEvent) => {
-            const progress = Math.floor(
-              (progressEvent.loaded / progressEvent.total) * 100
-            );
-            this.dropProgressBar.style.width = `${progress}%`;
-            this.dropProgressText.innerText = `${progress}%`;
-          },
-        }
-      );
+      const url = await this.uploadFiles(this.file, {
+        dropProgressBar: this.dropProgressBar,
+        dropProgressText: this.dropProgressText,
+      });
 
       const img = new Image();
       img.onload = () => this.handleImage(img);
-      img.src = response.data.url;
+      img.src = url;
 
       this.popupContainer.classList.remove('active');
       this.closePopUp();
